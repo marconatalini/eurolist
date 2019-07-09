@@ -1,0 +1,17 @@
+
+body {
+    padding-top: 60px;
+    background-color: lightgray;
+    background: url(../home.jpg) no-repeat center fixed;
+    background-size: cover;
+}
+
+a.navbar-brand {
+    background: url(../logo.png);
+    background-repeat: no-repeat;
+    background-size: 215px 48px;
+    background-position: left;
+    height: 100%;
+    margin-left: 5px;
+    background-position: 15px;
+}
