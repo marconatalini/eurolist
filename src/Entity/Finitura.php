@@ -28,6 +28,11 @@ class Finitura
      */
     private $prodotti;
 
+    /**
+     * @ORM\Column(type="string", length=10)
+     */
+    private $codice;
+
     public function __construct()
     {
         $this->prodotti = new ArrayCollection();
@@ -60,5 +65,17 @@ class Finitura
     public function getProdotti()
     {
         return $this->prodotti;
+    }
+
+    public function getCodice(): ?string
+    {
+        return $this->codice;
+    }
+
+    public function setCodice(string $codice): self
+    {
+        $this->codice = $codice;
+
+        return $this;
     }
 }

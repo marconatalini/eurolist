@@ -33,6 +33,16 @@ class Articolo
      */
     private $prodotti;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Classe", inversedBy="articoli")
+     */
+    private $classe;
+
+    /**
+     * @ORM\Column(type="string", length=15, nullable=true)
+     */
+    private $um;
+
     public function __construct()
     {
         $this->prodotti = new ArrayCollection();
@@ -81,6 +91,30 @@ class Articolo
     public function getProdotti()
     {
         return $this->prodotti;
+    }
+
+    public function getClasse(): ?Classe
+    {
+        return $this->classe;
+    }
+
+    public function setClasse(?Classe $classe): self
+    {
+        $this->classe = $classe;
+
+        return $this;
+    }
+
+    public function getUm(): ?string
+    {
+        return $this->um;
+    }
+
+    public function setUm(?string $um): self
+    {
+        $this->um = $um;
+
+        return $this;
     }
 
 }

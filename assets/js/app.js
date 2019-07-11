@@ -14,6 +14,7 @@ require('../../node_modules/bootstrap/dist/js/bootstrap.min.js');
 require('../../node_modules/holderjs/holder.min.js');
 
 require('../../node_modules/bootstrap/dist/css/bootstrap.min.css');
+
 // Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
 const $ = require('jquery');
 
