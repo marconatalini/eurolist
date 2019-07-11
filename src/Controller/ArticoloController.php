@@ -44,4 +44,30 @@ class ArticoloController extends AbstractController
             'articoli' => $articoli,
         ]);
     }
+
+    /**
+     * @Route("/classe/{classe<[B]\S{1}>}", name="articoli_classe")
+     */
+    public function articoli_classe($classe)
+    {
+        $articoli = $this->articoloRepository->findArticoliClasse($classe);
+
+        return $this->render('articolo/index.html.twig', [
+            'articoli' => $articoli,
+        ]);
+    }
+
+    /**
+     * @Route("/profili/{serie}", name="profili_serie")
+     */
+    public function serie_profili(Request $request, $serie)
+    {
+        $articoli = $this->articoloRepository->findProfiliSerie($serie);
+
+        return $this->render('articolo/index.html.twig', [
+            'articoli' => $articoli,
+        ]);
+    }
+
+
 }

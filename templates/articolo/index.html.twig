@@ -26,9 +26,9 @@
                     <div class="col-md-9 order-md-1 mb-2">
                         <h4>{{ articolo.codice }}</h4>
                         <small class="text-muted">{{ articolo.descrizione }}</small>
-                        <img width="100%" src="{{ asset("images/#{random(1, 114)}.jpg") }}"
+                        <img width="100%" src="{{ asset("jpgs/#{articolo.codice}.jpg") }}"
                              alt="{{ articolo.codice }} immagine" onerror="this.onerror=null;
-                                this.src='{{ (asset('images/noimage.jpg')) }}'" />
+                                this.src='{{ (asset('jpgs/noimage.jpg')) }}'" />
 
                     </div>
                 </div>

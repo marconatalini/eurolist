@@ -26,7 +26,35 @@ class ArticoloRepository extends ServiceEntityRepository
         return $qb->where('a.codice LIKE :codice')
             ->setParameter('codice', "%". $codice ."%")
             ->getQuery()
-            ->getResult();
+            ->setMaxResults(50)
+            ->getResult()
+            ;
+    }
+
+    public function findArticoliClasse($classe)
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        return $qb->join('a.classe', 'c')
+            ->where('c.codice = :classe')
+            ->setParameter('classe', $classe)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function findProfiliSerie($serie)
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        return $qb->join('a.classe', 'c')
+            ->where('c.codice = :classe')
+            ->andWhere('a.codice like :serie')
+            ->setParameter('classe', 'B1')
+            ->setParameter('serie', $serie . '%')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**

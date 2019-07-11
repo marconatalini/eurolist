@@ -17,25 +17,34 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ path('articolo_index') }}">Profili<span class="sr-only">(current)</span></a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profili</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown01">
+                    <a class="dropdown-item" href="{{ path('profili_serie', {serie: 'A0'}) }}">Serie A0</a>
+                    <a class="dropdown-item" href="{{ path('profili_serie', {serie: 'AZ'}) }}">Serie AZ</a>
+                    <a class="dropdown-item" href="{{ path('profili_serie', {serie: 'AS'}) }}">Serie AS</a>
+                    <a class="dropdown-item" href="{{ path('profili_serie', {serie: 'X'}) }}">Serie X</a>
+                    <a class="dropdown-item" href="{{ path('profili_serie', {serie: 'Y'}) }}">Serie Y</a>
+                    <a class="dropdown-item" href="{{ path('profili_serie', {serie: 'K'}) }}">Serie Sprint</a>
+                    <a class="dropdown-item" href="{{ path('profili_serie', {serie: 'E'}) }}">Serie EVO</a>
+                </div>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Clips</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Guarnizioni</a>
+                <a class="nav-link" href="{{ path('articoli_classe', {classe: 'B6'}) }}">Guarnizioni</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Squadrette</a>
+                <a class="nav-link" href="{{ path('articoli_classe', {classe: 'B8'}) }}">Squadrette</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Tappi</a>
+                <a class="nav-link" href="{{ path('articoli_classe', {classe: 'B7'}) }}">Accessori</a>
             </li>
         </ul>
         <form class="form-inline mt-2 mt-md-0">
             <input class="form-control mr-sm-2" type="text" name="codice" placeholder="Codice" aria-label="Search">
-            <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fa fa-search"></i>Cerca</button>
+            <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fas fa-search"></i> Cerca</button>
         </form>
     </div>
 </nav>
