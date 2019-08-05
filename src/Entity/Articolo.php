@@ -1,8 +1,12 @@
 <?php
+/**
+ * Articolo base, un codice univoco da cui nascono vari prodotti con finiture e prezzo diversi
+ */
 
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,17 +15,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Articolo
 {
+    const NUM_ITEMS = 20;
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @ORM\Column(type="string", length=13)
      */
-    private $codice;
+    private $id;
 
     /**
      * @ORM\Column(type="string", length=254, nullable=True)
@@ -43,30 +42,26 @@ class Articolo
      */
     private $um;
 
+
     public function __construct()
     {
         $this->prodotti = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    /**
+     * @return mixed
+     */
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * @return mixed
+     * @param mixed $id
      */
-    public function getCodice()
+    public function setId($id): void
     {
-        return $this->codice;
-    }
-
-    /**
-     * @param mixed $codice
-     */
-    public function setCodice($codice): void
-    {
-        $this->codice = $codice;
+        $this->id = $id;
     }
 
     /**
@@ -116,5 +111,6 @@ class Articolo
 
         return $this;
     }
+
 
 }

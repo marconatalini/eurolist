@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Articolo;
+use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -19,42 +20,72 @@ class ArticoloRepository extends ServiceEntityRepository
         parent::__construct($registry, Articolo::class);
     }
 
-    public function findArticolo(string $codice)
+    public function findArticoli(int $page = 1, $serie = null, $classe = null) : Paginator
     {
-        $qb = $this->createQueryBuilder('a');
+        $qb = $this->createQueryBuilder('a')
+            ->orderBy('a.id');
 
-        return $qb->where('a.codice LIKE :codice')
-            ->setParameter('codice', "%". $codice ."%")
-            ->getQuery()
-            ->setMaxResults(50)
-            ->getResult()
-            ;
+        if ($serie) {
+            $qb->where('a.id like :serie')
+                ->setParameter('serie', $serie.'%');
+        }
+
+        if ($classe){
+            $qb->join('a.classe', 'c')
+                ->andWhere('c.codice = :classe')
+                ->setParameter('classe', $classe);
+        }
+
+        return (new Paginator($qb))->paginate($page);
+
     }
 
-    public function findArticoliClasse($classe)
+    /**
+     * @return Articolo[]
+     */
+    public function findBySearchQuery(string $rawQuery, int $limit = Articolo::NUM_ITEMS): array
     {
-        $qb = $this->createQueryBuilder('a');
+        $query = $this->sanitizeSearchQuery($rawQuery);
+        $searchTerms = $this->extractSearchTerms($query);
 
-        return $qb->join('a.classe', 'c')
-            ->where('c.codice = :classe')
-            ->setParameter('classe', $classe)
-            ->getQuery()
-            ->getResult()
+        if (0 === \count($searchTerms)) {
+            return [];
+        }
+
+        $queryBuilder = $this->createQueryBuilder('a');
+
+        foreach ($searchTerms as $key => $term) {
+            $queryBuilder
+                ->orWhere('a.id LIKE :t_'.$key)
+                ->setParameter('t_'.$key, '%'.$term.'%')
             ;
+        }
+
+        return $queryBuilder
+            ->orderBy('a.id', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 
-    public function findProfiliSerie($serie)
+    /**
+     * Removes all non-alphanumeric characters except whitespaces.
+     */
+    private function sanitizeSearchQuery(string $query): string
     {
-        $qb = $this->createQueryBuilder('a');
+        return trim(preg_replace('/[[:space:]]+/', ' ', $query));
+    }
 
-        return $qb->join('a.classe', 'c')
-            ->where('c.codice = :classe')
-            ->andWhere('a.codice like :serie')
-            ->setParameter('classe', 'B1')
-            ->setParameter('serie', $serie . '%')
-            ->getQuery()
-            ->getResult()
-            ;
+    /**
+     * Splits the search query into terms and removes the ones which are irrelevant.
+     */
+    private function extractSearchTerms(string $searchQuery): array
+    {
+        $terms = array_unique(explode(' ', $searchQuery));
+
+        return array_filter($terms, function ($term) {
+            return 2 <= mb_strlen($term);
+        });
     }
 
     // /**

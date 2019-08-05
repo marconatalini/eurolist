@@ -4,7 +4,7 @@
 
     <div class="container">
         <ul class="list-group mb-3">
-            {% for articolo in articoli %}
+            {% for articolo in paginator.results %}
             <li class="list-group-item">
                 <div class="row">
                     <div class="col-md-3 order-md-2 mb-2">
@@ -24,10 +24,10 @@
                         </ul>
                     </div>
                     <div class="col-md-9 order-md-1 mb-2">
-                        <h4>{{ articolo.codice }}</h4>
+                        <h4>{{ articolo.id }}</h4>
                         <small class="text-muted">{{ articolo.descrizione }}</small>
-                        <img width="100%" src="{{ asset("jpgs/#{articolo.codice}.jpg") }}"
-                             alt="{{ articolo.codice }} immagine" onerror="this.onerror=null;
+                        <img width="100%" src="{{ asset("jpgs/#{articolo.id}.jpg") }}"
+                             alt="{{ articolo.id }} immagine" onerror="this.onerror=null;
                                 this.src='{{ (asset('jpgs/noimage.jpg')) }}'" />
 
                     </div>
@@ -37,5 +37,46 @@
             {% endfor %}
         </ul>
     </div>
+
+    {% if paginator.hasToPaginate %}
+        <nav aria-label="pagine risultati ricerca" class="row justify-content-center">
+            <ul class="pagination col-md-auto">
+                {% if paginator.startPage > 1%}
+                    <li class="page-item"><a class="page-link" href="{{ path('articolo_index_paginated', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({page: 1})) }}" rel="previous"><i class="fas fa-angle-double-left"></i></a></li>
+                {% endif %}
+                {% if paginator.hasPreviousPage %}
+                    <li class="page-item"><a class="page-link" href="{{ path('articolo_index_paginated', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({page: paginator.previousPage})) }}" rel="previous"><i class="fas fa-angle-left"></i></a></li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true"><i class="fas fa-angle-left"></i></a>
+                    </li>
+                {% endif %}
+
+                {#{% for i in 1..paginator.lastPage %}#}
+                {% for i in paginator.startPage..paginator.endPage %}
+                    {% if i == paginator.currentPage %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="#">{{ i }} <span class="sr-only">(current)</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ path('articolo_index_paginated', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({page: i})) }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if paginator.hasNextPage %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('articolo_index_paginated', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({page: paginator.nextPage})) }}" rel="next"><i class="fas fa-angle-right"></i></a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true"><i class="fas fa-angle-right"></i></a>
+                    </li>
+                {% endif %}
+                {% if paginator.endPage < paginator.lastPage %}
+                    <li class="page-item"><a class="page-link" href="{{ path('articolo_index_paginated', app.request.attributes.get('_route_params')|merge(app.request.query.all)|merge({page: paginator.lastPage})) }}" rel="previous"><i class="fas fa-angle-double-right"></i></a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 
 {% endblock %}
