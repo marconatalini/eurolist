@@ -6,6 +6,7 @@ body {
     background-color: lightgray;
     background: url(../home.jpg) no-repeat center fixed;
     background-size: cover;
+    color: whitesmoke;
 }
 
 a.navbar-brand {

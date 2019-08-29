@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Articolo;
+use App\Entity\Famiglia;
 use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -20,20 +21,55 @@ class ArticoloRepository extends ServiceEntityRepository
         parent::__construct($registry, Articolo::class);
     }
 
-    public function findArticoli(int $page = 1, $serie = null, $classe = null) : Paginator
+    public function findArticoli(int $page = 1, $serie = null, $search = null, $classe = null, $linkTo = null, $famiglie = null) : Paginator
     {
         $qb = $this->createQueryBuilder('a')
             ->orderBy('a.id');
 
-        if ($serie) {
+        if (null !== $serie) {
             $qb->where('a.id like :serie')
                 ->setParameter('serie', $serie.'%');
         }
 
-        if ($classe){
+        if (null !== $classe){
             $qb->join('a.classe', 'c')
-                ->andWhere('c.codice = :classe')
+                ->orWhere('c.codice = :classe')
                 ->setParameter('classe', $classe);
+        }
+
+        if (null !== $search) {
+            $qb->where('a.id like :search')
+                ->setParameter('search', '%'.$search.'%');
+        }
+
+        /**
+         * @var Articolo[] $linkTo
+         */
+        if (null !== $linkTo) {
+            foreach ($linkTo as $key => $art) {
+                $qb->orWhere('a.id = :codice_'.$key)
+                    ->setParameter('codice_'.$key, $art->getId());
+            }
+            if (count($linkTo) == 0) {
+                $qb->where('a.id = 1'); // no result
+            }
+        }
+
+        /**
+         * @var Articolo $articolo
+         * @var Famiglia $famiglia
+         */
+        if (null !== $famiglie) {
+            foreach ($famiglie as $famiglia){
+                foreach ($famiglia->getArticoli() as $key => $art) {
+                    $qb->orWhere('a.id = :codice_'.$key)
+                        ->setParameter('codice_'.$key, $art->getId());
+                }
+            }
+
+            if (count($famiglie) == 0) {
+                $qb->where('a.id = 1'); //no result
+            }
         }
 
         return (new Paginator($qb))->paginate($page);

@@ -1,9 +1,15 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('js/index_articolo') }}
+{% endblock %}
+
 {% block body %}
 
     <div class="container">
-        <ul class="list-group mb-3">
+        {% if paginator.numResults > 0 %}
+            <ul class="list-group mb-3">
             {% for articolo in paginator.results %}
             <li class="list-group-item">
                 <div class="row">
@@ -26,17 +32,24 @@
                     <div class="col-md-9 order-md-1 mb-2">
                         <h4>{{ articolo.id }}</h4>
                         <small class="text-muted">{{ articolo.descrizione }}</small>
-                        <img width="100%" src="{{ asset("jpgs/#{articolo.id}.jpg") }}"
+                        <img width="100%" src="{{ asset("jpgs/#{articolo.immagine}.jpg") }}"
                              alt="{{ articolo.id }} immagine" onerror="this.onerror=null;
                                 this.src='{{ (asset('jpgs/noimage.jpg')) }}'" />
-
+                        <a class="badge badge-info" href="#">Dati tecnici</a>
+                        <a class="badge badge-info" href="{{ path('articolo_index', {familyOf: articolo.id}) }}">Famiglia</a>
+                        <a class="badge badge-info" href="{{ path('articolo_index', {linkTo: articolo.id}) }}">Collegamenti</a>
                     </div>
                 </div>
 
             </li>
             {% endfor %}
         </ul>
+        {% else %}
+            <h3 class="text-center">Nessun articolo trovato!</h3>
+        {% endif %}
     </div>
+
+    <button class="btn btn-info" id="btnToTop"><i class="fas fa-angle-up"></i> Top</button>
 
     {% if paginator.hasToPaginate %}
         <nav aria-label="pagine risultati ricerca" class="row justify-content-center">
@@ -78,5 +91,11 @@
             </ul>
         </nav>
     {% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/index_articolo') }}
 
 {% endblock %}

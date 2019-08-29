@@ -9,6 +9,8 @@
 namespace App\Controller;
 
 use App\Repository\ArticoloRepository;
+use App\Repository\FamigliaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,11 +40,16 @@ class ArticoloController extends AbstractController
      * Content-Type header for the response.
      * See https://symfony.com/doc/current/quick_tour/the_controller.html#using-formats
      */
-    public function index(Request $request, int $page)
+    public function index(Request $request, int $page, ArticoloRepository $articoloRepository, FamigliaRepository $famigliaRepository)
     {
         $serie = null;
         if ($request->query->has('serie')){
             $serie = $request->get('serie');
+        }
+
+        $search = null;
+        if ($request->query->has('codice')){
+            $search = $request->get('codice');
         }
 
         $classe = null;
@@ -50,24 +57,26 @@ class ArticoloController extends AbstractController
             $classe = $request->get('classe');
         }
 
+        $linkTo = null;
+        if ($request->query->has('linkTo')){
+            $linkTo = $articoloRepository->find($request->query->get('linkTo'))->getLinkedTo();
+        }
 
-        $articoli = $this->articoloRepository->findArticoli($page, $serie, $classe);
+        $famiglie = null;
+        if ($request->query->has('familyOf')){
+            $famiglie = $articoloRepository->find($request->query->get('familyOf'))->getFamiglie();
+        }
+
+        $famiglia = null;
+        if ($request->query->has('famiglia')){
+            $famiglie = array($famigliaRepository->find($request->query->get('famiglia')));
+        }
+
+        $articoli = $this->articoloRepository->findArticoli($page, $serie, $search, $classe, $linkTo, $famiglie);
 
         return $this->render('articolo/index.html.twig', [
             'paginator' => $articoli,
+            'famiglie' => $famigliaRepository->findAll(),
         ]);
     }
-
-    /**
-     * @Route("/classe/{classe<[B]\S{1}>}", name="articoli_classe")
-     */
-    public function articoli_classe($classe)
-    {
-        $articoli = $this->articoloRepository->findArticoliClasse($classe);
-
-        return $this->render('articolo/index.html.twig', [
-            'articoli' => $articoli,
-        ]);
-    }
-
 }

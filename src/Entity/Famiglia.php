@@ -7,58 +7,48 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ClasseRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\FamigliaRepository")
  */
-class Classe
+class Famiglia
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=30)
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=13, unique=true)
-     */
-    private $codice;
-
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $descrizione;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Articolo", mappedBy="classe")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Articolo", inversedBy="famiglie")
      */
     private $articoli;
+
+    public function __toString()
+    {
+        return $this->getId();
+    }
+
 
     public function __construct()
     {
         $this->articoli = new ArrayCollection();
     }
 
-    public function __toString()
-    {
-        return $this->getDescrizione();
-    }
-
-
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getCodice(): ?string
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
     {
-        return $this->codice;
-    }
-
-    public function setCodice(string $codice): self
-    {
-        $this->codice = $codice;
-
-        return $this;
+        $this->id = $id;
     }
 
     public function getDescrizione(): ?string
@@ -85,7 +75,6 @@ class Classe
     {
         if (!$this->articoli->contains($articoli)) {
             $this->articoli[] = $articoli;
-            $articoli->setClasse($this);
         }
 
         return $this;
@@ -95,10 +84,6 @@ class Classe
     {
         if ($this->articoli->contains($articoli)) {
             $this->articoli->removeElement($articoli);
-            // set the owning side to null (unless already changed)
-            if ($articoli->getClasse() === $this) {
-                $articoli->setClasse(null);
-            }
         }
 
         return $this;
